@@ -15,14 +15,15 @@ func NewDB() *gorm.DB {
 		if err != nil {
 			log.Fatalln(err)
 		}
-	}// gormパッケージの中で定義されているDBの実態のアドレスが返ってくる
+	}// GORMでDB操作するためのオブジェクト（gorm.DB）を受け取って返してる
 
 	// DBに接続するためのURLを作成
 	// Sprintfを使うことで、指定したフォーマットに従って文字列が整形・変換をしてくれる。
+	// urlを使って、DBに接続
 	url := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", os.Getenv("POSTGRES_USER"),
 	os.Getenv("POSTGRES_PW"), os.Getenv("POSTGRES_HOST"),
 	os.Getenv("POSTGRES_PORT"), os.Getenv("POSTGRES_DB"))
-	db, err := gorm.Open(postgres.Open(url), &gorm.Config{}) // urlを使って、DBに接続
+	db, err := gorm.Open(postgres.Open(url), &gorm.Config{}) // gorm.OpenでDBを開く(postgresをオープン(url), からの構造体(デフォルトの値でDBを起動))
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -30,12 +31,13 @@ func NewDB() *gorm.DB {
 	return db
 } 
 
+// DBを閉じる
 func CloseDB(db *gorm.DB) {
-	sqDB, _ := db.DB()
+	sqDB, _ := db.DB() // *sql.DBを取り出す
 	if err := sqDB.Close(); err != nil {
 		log.Fatalln(err)
 	}
-} // DB接続を閉じる
+}
 
 
 
