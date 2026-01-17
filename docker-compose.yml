@@ -9,6 +9,7 @@ services:
       POSTGRES_USER: porota
       POSTGRES_PASSWORD: porota
       POSTGRES_DB: porota
+      POSTGRES_HOST: localhost
     restart: always
     networks:
       - lesson
