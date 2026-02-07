@@ -12,9 +12,13 @@ import (
 func main() {
 	db := db.NewDB()
 	userRepository := repository.NewUserRepository(db)
+	// DIを追加
+	taskRepository := repository.NewTaskRepository(db)
 	userUsecase := usecase.NewUserUsecase(userRepository)
+	taskUsecase := usecase.NewTaskRepository(taskRepository)
 	userController := controller.NewUserController(userUsecase)
-	e := router.NewRouter(userController)
+	taskController := controller.NewTaskController(taskUsecase)
+	e := router.NewRouter(userController, taskController)
 	// サーバーを起動
 	e.Logger.Fatal(e.Start(":8080"))
 }
