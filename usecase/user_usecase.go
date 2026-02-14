@@ -68,18 +68,18 @@ func (uu *userUsecase) Login(user model.User) (string, error) {
 		return "", err
 	}
 	// 登録済みユーザーを取得
-	storeeUser := model.User{}
-	if err := uu.ur.GetUserByEmail(&storeeUser, user.Email); err != nil {
+	storedUser := model.User{}
+	if err := uu.ur.GetUserByEmail(&storedUser, user.Email); err != nil {
 		return "", err
 	}
-	// storeeUser.Password は DBに保存されているハッシュ（bcryptの結果）user.Password は ログインフォームで入力された生パスワード
-	err := bcrypt.CompareHashAndPassword([]byte(storeeUser.Password), []byte(user.Password))
+	// storedUser.Password は DBに保存されているハッシュ（bcryptの結果）user.Password は ログインフォームで入力された生パスワード
+	err := bcrypt.CompareHashAndPassword([]byte(storedUser.Password), []byte(user.Password))
 	if err != nil {
 		return "", err
 	}
 	// JWTトークンを作る
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{ // claimsはトークンに入れる情報(ペイロード) HS256 は署名方式（秘密鍵で署名するタイプ）
-		"user_id": storeeUser.ID,                         // 誰とログインしたか
+		"user_id": storedUser.ID,                         // 誰とログインしたか
 		"exp":     time.Now().Add(time.Hour * 12).Unix(), // 有効期限(12時間後)
 	})
 	// 署名を改竄できないよう文字列にするして、改ざんされたら検知する
